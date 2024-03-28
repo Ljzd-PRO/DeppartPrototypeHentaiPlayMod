@@ -5,6 +5,7 @@ using MelonLoader;
 using UnityEngine;
 
 [assembly: MelonInfo(typeof(HentaiPlayMod), "HentaiPlay", "0.1.0", "Ljzd-PRO")]
+[assembly: MelonGame("N4bA", "DEPPART prototype")]
 
 namespace DeppartPrototypeHentaiPlayMod
 {
