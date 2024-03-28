@@ -10,13 +10,14 @@ namespace DeppartPrototypeHentaiPlayMod
 {
     public class HentaiPlayMod : MelonMod
     {
-        private readonly Dictionary<string, bool> _events = new Dictionary<string, bool>()
+        private readonly Dictionary<string, bool> _events = new Dictionary<string, bool>
         {
-            {EventEnum.BulbBroken.ToString(), false},
-            {EventEnum.ZombieRun.ToString(), false},
-            {EventEnum.EnterLevel1.ToString(), false},
-            {EventEnum.Level1Zombie.ToString(), false}
+            { EventEnum.BulbBroken.ToString(), false },
+            { EventEnum.ZombieRun.ToString(), false },
+            { EventEnum.EnterLevel1.ToString(), false },
+            { EventEnum.Level1Zombie.ToString(), false }
         };
+
         public override void OnLateUpdate()
         {
             ReportBulbBroken();
@@ -25,16 +26,36 @@ namespace DeppartPrototypeHentaiPlayMod
             ReportLevel1Zombie();
         }
 
+        public override void OnSceneWasInitialized(int buildIndex, string sceneName)
+        {
+            ReportGameEnterEvent();
+        }
+        
+        public override void OnApplicationQuit()
+        {
+            ReportGameExitEvent();
+        }
+
         private void ReportActivateEvent(string eventName)
         {
             LoggerInstance.Msg($"ActivateEvent: {eventName}");
         }
-        
+
         private void ReportDeactivateEvent(string eventName)
         {
             LoggerInstance.Msg($"DeactivateEvent: {eventName}");
         }
-        
+
+        private void ReportGameEnterEvent()
+        {
+            LoggerInstance.Msg("GameEnterEvent");
+        }
+
+        private void ReportGameExitEvent()
+        {
+            LoggerInstance.Msg("GameExitEvent");
+        }
+
         private void UpdateEventStatus(string eventName, bool isActivate)
         {
             if (isActivate && !_events[eventName])
@@ -57,10 +78,10 @@ namespace DeppartPrototypeHentaiPlayMod
                 UpdateEventStatus(EventEnum.BulbBroken.ToString(), false);
                 return;
             }
-            
+
             UpdateEventStatus(EventEnum.BulbBroken.ToString(), gameObject.gameObject.activeSelf);
         }
-        
+
         private void ReportZombieRun()
         {
             var gameObject = GameObject.Find("/z/GameObject");
@@ -69,10 +90,10 @@ namespace DeppartPrototypeHentaiPlayMod
                 UpdateEventStatus(EventEnum.ZombieRun.ToString(), false);
                 return;
             }
-            
+
             UpdateEventStatus(EventEnum.ZombieRun.ToString(), gameObject.gameObject.activeSelf);
         }
-        
+
         private void ReportEnterLevel1()
         {
             var gameObject = GameObject.Find("/lvl1");
@@ -81,13 +102,15 @@ namespace DeppartPrototypeHentaiPlayMod
                 UpdateEventStatus(EventEnum.EnterLevel1.ToString(), false);
                 return;
             }
+
             UpdateEventStatus
             (
                 EventEnum.EnterLevel1.ToString(),
-                gameObject.gameObject.activeSelf && _events[EventEnum.BulbBroken.ToString()] && _events[EventEnum.ZombieRun.ToString()]
+                gameObject.gameObject.activeSelf && _events[EventEnum.BulbBroken.ToString()] &&
+                _events[EventEnum.ZombieRun.ToString()]
             );
         }
-        
+
         private void ReportLevel1Zombie()
         {
             var gameObject = GameObject.Find("/lvl1/z");
@@ -96,8 +119,11 @@ namespace DeppartPrototypeHentaiPlayMod
                 UpdateEventStatus(EventEnum.Level1Zombie.ToString(), false);
                 return;
             }
+
             var level1ZombieExists = gameObject.GetComponentsInChildren<Transform>()
-                .FirstOrDefault(child => child.name.StartsWith("Ch10_nonPBR") && child.gameObject.activeSelf) != null;
+                .FirstOrDefault(child =>
+                    child.name.StartsWith("Ch10_nonPBR") && child.gameObject.activeSelf &&
+                    child.GetComponent<Animator>().enabled) != null;
             UpdateEventStatus(EventEnum.Level1Zombie.ToString(), level1ZombieExists);
         }
     }
