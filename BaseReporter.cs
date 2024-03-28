@@ -1,33 +1,32 @@
-using MelonLoader;
-
 namespace DeppartPrototypeHentaiPlayMod
 {
     public class BaseReporter : IEventReporter
     {
-        private readonly MelonMod _melonMod;
-        public BaseReporter(MelonMod melonMod)
+        protected readonly HentaiPlayMod MelonMod;
+
+        public BaseReporter(HentaiPlayMod melonMod)
         {
-            _melonMod = melonMod;
+            MelonMod = melonMod;
         }
 
-        public void ReportActivateEvent(string eventName)
+        public virtual void ReportActivateEvent(string eventName)
         {
-            _melonMod.LoggerInstance.Msg($"ActivateEvent: {eventName}");
+            MelonMod.LoggerInstance.Msg($"ActivateEvent: {eventName}");
         }
 
-        public void ReportDeactivateEvent(string eventName)
+        public virtual void ReportDeactivateEvent(string eventName)
         {
-            _melonMod.LoggerInstance.Msg($"DeactivateEvent: {eventName}");
+            MelonMod.LoggerInstance.Msg($"DeactivateEvent: {eventName}");
         }
 
-        public void ReportGameEnterEvent()
+        public virtual void ReportGameEnterEvent()
         {
-            _melonMod.LoggerInstance.Msg("GameEnterEvent");
+            MelonMod.LoggerInstance.Msg("GameEnterEvent");
         }
 
-        public void ReportGameExitEvent()
+        public virtual void ReportGameExitEvent()
         {
-            _melonMod.LoggerInstance.Msg("GameExitEvent");
+            MelonMod.LoggerInstance.Msg("GameExitEvent");
         }
     }
 }

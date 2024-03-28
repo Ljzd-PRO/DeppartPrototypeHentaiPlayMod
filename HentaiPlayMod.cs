@@ -23,22 +23,34 @@ namespace DeppartPrototypeHentaiPlayMod
 
         private IEventReporter _eventReporter;
         private MelonPreferences_Entry<string> _eventReporterTypeEntry;
+        private MelonPreferences_Entry<string> _httpReporterUrlEntry;
         private MelonPreferences_Category _preferencesCategory;
+
+        public HentaiPlayMod()
+        {
+            _eventReporter = new BaseReporter(this);
+        }
 
         public override void OnInitializeMelon()
         {
-            _preferencesCategory = MelonPreferences.CreateCategory("Ljzd-PRO-HentaiPlay");
+            _preferencesCategory = MelonPreferences.CreateCategory("HentaiPlay");
             _eventReporterTypeEntry = _preferencesCategory.CreateEntry
             (
                 "EventReporterType",
                 nameof(BaseReporter),
                 description: "Type of reporter that report events in game"
             );
+            _httpReporterUrlEntry = _preferencesCategory.CreateEntry
+            (
+                "HttpReporterUrl",
+                "http://127.0.0.1:7788",
+                description: "Report URL for HttpReporter"
+            );
         }
 
-        public override void OnPreferencesLoaded()
+        public override void OnLateInitializeMelon()
         {
-            SetupEventReporter(_eventReporterTypeEntry.Value);
+            SetupEventReporter();
         }
 
         public override void OnLateUpdate()
@@ -61,12 +73,18 @@ namespace DeppartPrototypeHentaiPlayMod
             _eventReporter.ReportGameExitEvent();
         }
 
-        private void SetupEventReporter(string reporterTypeName)
+        private void SetupEventReporter()
         {
-            switch (reporterTypeName)
+            var eventReporterType = _eventReporterTypeEntry.Value;
+            var httpReporterUrl = _httpReporterUrlEntry.Value;
+            LoggerInstance.Msg($"Using reporter: {eventReporterType}");
+            switch (eventReporterType)
             {
                 case nameof(BaseReporter):
                     _eventReporter = new BaseReporter(this);
+                    break;
+                case nameof(HttpReporter):
+                    _eventReporter = new HttpReporter(this, httpReporterUrl);
                     break;
             }
         }
