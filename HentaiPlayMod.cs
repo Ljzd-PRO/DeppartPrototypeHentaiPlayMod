@@ -20,6 +20,13 @@ namespace DeppartPrototypeHentaiPlayMod
             { EventEnum.PlayerDied.ToString(), false }
         };
 
+        private readonly IEventReporter _eventReporter;
+
+        public HentaiPlayMod()
+        {
+            _eventReporter = new BaseReporter(this);
+        }
+
         public override void OnLateUpdate()
         {
             ReportBulbBroken();
@@ -32,32 +39,12 @@ namespace DeppartPrototypeHentaiPlayMod
 
         public override void OnSceneWasInitialized(int buildIndex, string sceneName)
         {
-            ReportGameEnterEvent();
+            _eventReporter.ReportGameEnterEvent();
         }
-        
+
         public override void OnApplicationQuit()
         {
-            ReportGameExitEvent();
-        }
-
-        private void ReportActivateEvent(string eventName)
-        {
-            LoggerInstance.Msg($"ActivateEvent: {eventName}");
-        }
-
-        private void ReportDeactivateEvent(string eventName)
-        {
-            LoggerInstance.Msg($"DeactivateEvent: {eventName}");
-        }
-
-        private void ReportGameEnterEvent()
-        {
-            LoggerInstance.Msg("GameEnterEvent");
-        }
-
-        private void ReportGameExitEvent()
-        {
-            LoggerInstance.Msg("GameExitEvent");
+            _eventReporter.ReportGameExitEvent();
         }
 
         private void UpdateEventStatus(string eventName, bool isActivate)
@@ -65,12 +52,12 @@ namespace DeppartPrototypeHentaiPlayMod
             if (isActivate && !_events[eventName])
             {
                 _events[eventName] = true;
-                ReportActivateEvent(eventName);
+                _eventReporter.ReportActivateEvent(eventName);
             }
             else if (!isActivate && _events[eventName])
             {
                 _events[eventName] = false;
-                ReportDeactivateEvent(eventName);
+                _eventReporter.ReportDeactivateEvent(eventName);
             }
         }
 
@@ -130,7 +117,7 @@ namespace DeppartPrototypeHentaiPlayMod
                     child.GetComponent<Animator>().enabled) != null;
             UpdateEventStatus(EventEnum.Level1Zombie.ToString(), level1ZombieExists);
         }
-        
+
         private void ReportEndZombie()
         {
             var gameObject = GameObject.Find("/end/Ch10_nonPBR (11)");
@@ -142,7 +129,7 @@ namespace DeppartPrototypeHentaiPlayMod
 
             UpdateEventStatus(EventEnum.EndZombie.ToString(), gameObject.gameObject.activeSelf);
         }
-        
+
         private void ReportPlayerDied()
         {
             var gameObject = GameObject.Find("/DIE");

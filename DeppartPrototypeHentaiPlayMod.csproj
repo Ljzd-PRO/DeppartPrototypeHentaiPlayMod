@@ -48,7 +48,9 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="EventEnum.cs" />
-        <Compile Include="MonoBehaviour1.cs"/>
+        <Compile Include="BaseReporter.cs" />
+        <Compile Include="IEventReporter.cs" />
+        <Compile Include="HentaiPlayMod.cs" />
         <Compile Include="Properties\AssemblyInfo.cs"/>
     </ItemGroup>
     <ItemGroup>
