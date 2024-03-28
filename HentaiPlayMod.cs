@@ -21,11 +21,24 @@ namespace DeppartPrototypeHentaiPlayMod
             { EventEnum.PlayerDied.ToString(), false }
         };
 
-        private readonly IEventReporter _eventReporter;
+        private IEventReporter _eventReporter;
+        private MelonPreferences_Entry<string> _eventReporterTypeEntry;
+        private MelonPreferences_Category _preferencesCategory;
 
-        public HentaiPlayMod()
+        public override void OnInitializeMelon()
         {
-            _eventReporter = new BaseReporter(this);
+            _preferencesCategory = MelonPreferences.CreateCategory("Ljzd-PRO-HentaiPlay");
+            _eventReporterTypeEntry = _preferencesCategory.CreateEntry
+            (
+                "EventReporterType",
+                nameof(BaseReporter),
+                description: "Type of reporter that report events in game"
+            );
+        }
+
+        public override void OnPreferencesLoaded()
+        {
+            SetupEventReporter(_eventReporterTypeEntry.Value);
         }
 
         public override void OnLateUpdate()
@@ -46,6 +59,16 @@ namespace DeppartPrototypeHentaiPlayMod
         public override void OnApplicationQuit()
         {
             _eventReporter.ReportGameExitEvent();
+        }
+
+        private void SetupEventReporter(string reporterTypeName)
+        {
+            switch (reporterTypeName)
+            {
+                case nameof(BaseReporter):
+                    _eventReporter = new BaseReporter(this);
+                    break;
+            }
         }
 
         private void UpdateEventStatus(string eventName, bool isActivate)
