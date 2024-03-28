@@ -15,7 +15,9 @@ namespace DeppartPrototypeHentaiPlayMod
             { EventEnum.BulbBroken.ToString(), false },
             { EventEnum.ZombieRun.ToString(), false },
             { EventEnum.EnterLevel1.ToString(), false },
-            { EventEnum.Level1Zombie.ToString(), false }
+            { EventEnum.Level1Zombie.ToString(), false },
+            { EventEnum.EndZombie.ToString(), false },
+            { EventEnum.PlayerDied.ToString(), false }
         };
 
         public override void OnLateUpdate()
@@ -24,6 +26,8 @@ namespace DeppartPrototypeHentaiPlayMod
             ReportZombieRun();
             ReportEnterLevel1();
             ReportLevel1Zombie();
+            ReportEndZombie();
+            ReportPlayerDied();
         }
 
         public override void OnSceneWasInitialized(int buildIndex, string sceneName)
@@ -125,6 +129,30 @@ namespace DeppartPrototypeHentaiPlayMod
                     child.name.StartsWith("Ch10_nonPBR") && child.gameObject.activeSelf &&
                     child.GetComponent<Animator>().enabled) != null;
             UpdateEventStatus(EventEnum.Level1Zombie.ToString(), level1ZombieExists);
+        }
+        
+        private void ReportEndZombie()
+        {
+            var gameObject = GameObject.Find("/end/Ch10_nonPBR (11)");
+            if (gameObject == null)
+            {
+                UpdateEventStatus(EventEnum.EndZombie.ToString(), false);
+                return;
+            }
+
+            UpdateEventStatus(EventEnum.EndZombie.ToString(), gameObject.gameObject.activeSelf);
+        }
+        
+        private void ReportPlayerDied()
+        {
+            var gameObject = GameObject.Find("/DIE");
+            if (gameObject == null)
+            {
+                UpdateEventStatus(EventEnum.PlayerDied.ToString(), false);
+                return;
+            }
+
+            UpdateEventStatus(EventEnum.PlayerDied.ToString(), gameObject.gameObject.activeSelf);
         }
     }
 }

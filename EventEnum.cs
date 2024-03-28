@@ -5,6 +5,8 @@ namespace DeppartPrototypeHentaiPlayMod
         BulbBroken,
         ZombieRun,
         EnterLevel1,
-        Level1Zombie
+        Level1Zombie,
+        EndZombie,
+        PlayerDied
     }
 }
