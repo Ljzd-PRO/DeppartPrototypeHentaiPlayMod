@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Reflection;
 using System.Threading;
 
 namespace DeppartPrototypeHentaiPlayMod
@@ -12,6 +13,16 @@ namespace DeppartPrototypeHentaiPlayMod
 
         public HttpReporter(HentaiPlayMod melonMod, string reportUrl) : base(melonMod)
         {
+            try
+            {
+                Assembly.Load("Mono.HttpUtility");
+            }
+            catch (Exception e)
+            {
+                MelonMod.LoggerInstance.Error("Mono.HttpUtility is required");
+                throw;
+            }
+
             _reportUrl = reportUrl;
         }
 
