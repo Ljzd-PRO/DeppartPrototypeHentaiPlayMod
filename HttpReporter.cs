@@ -17,7 +17,7 @@ namespace DeppartPrototypeHentaiPlayMod
             {
                 Assembly.Load("Mono.HttpUtility");
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 MelonMod.LoggerInstance.Error("Mono.HttpUtility is required");
                 throw;
