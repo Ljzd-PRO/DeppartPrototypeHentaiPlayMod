@@ -118,7 +118,7 @@ namespace DeppartPrototypeHentaiPlayMod
                 return;
             }
 
-            UpdateEventStatus(EventEnum.BulbBroken.ToString(), gameObject.gameObject.activeSelf);
+            UpdateEventStatus(EventEnum.BulbBroken.ToString(), gameObject.activeSelf);
         }
 
         private void ReportZombieRun()
@@ -130,7 +130,7 @@ namespace DeppartPrototypeHentaiPlayMod
                 return;
             }
 
-            UpdateEventStatus(EventEnum.ZombieRun.ToString(), gameObject.gameObject.activeSelf);
+            UpdateEventStatus(EventEnum.ZombieRun.ToString(), gameObject.activeSelf);
         }
 
         private void ReportEnterLevel1()
@@ -145,7 +145,7 @@ namespace DeppartPrototypeHentaiPlayMod
             UpdateEventStatus
             (
                 EventEnum.EnterLevel1.ToString(),
-                gameObject.gameObject.activeSelf && _events[EventEnum.BulbBroken.ToString()] &&
+                gameObject.activeSelf && _events[EventEnum.BulbBroken.ToString()] &&
                 _events[EventEnum.ZombieRun.ToString()]
             );
         }
@@ -175,7 +175,7 @@ namespace DeppartPrototypeHentaiPlayMod
                 return;
             }
 
-            UpdateEventStatus(EventEnum.EndZombie.ToString(), gameObject.gameObject.activeSelf);
+            UpdateEventStatus(EventEnum.EndZombie.ToString(), gameObject.activeSelf);
         }
 
         private void ReportPlayerDied()
@@ -187,7 +187,7 @@ namespace DeppartPrototypeHentaiPlayMod
                 return;
             }
 
-            UpdateEventStatus(EventEnum.PlayerDied.ToString(), gameObject.gameObject.activeSelf);
+            UpdateEventStatus(EventEnum.PlayerDied.ToString(), gameObject.activeSelf);
         }
 
         private void ReportShot()
