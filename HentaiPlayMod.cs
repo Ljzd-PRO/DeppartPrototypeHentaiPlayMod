@@ -27,6 +27,7 @@ namespace DeppartPrototypeHentaiPlayMod
         private IEventReporter _eventReporter;
         private MelonPreferences_Entry<string> _eventReporterTypeEntry;
         private MelonPreferences_Entry<string> _httpReporterUrlEntry;
+        private MelonPreferences_Entry<int> _httpReportInGameInterval;
         private MelonPreferences_Category _preferencesCategory;
 
         public HentaiPlayMod()
@@ -48,6 +49,12 @@ namespace DeppartPrototypeHentaiPlayMod
                 "HttpReporterUrl",
                 "http://127.0.0.1:7788/report",
                 description: "Report URL for HttpReporter"
+            );
+            _httpReportInGameInterval = _preferencesCategory.CreateEntry
+            (
+                "HttpReportInGameInterval",
+                3000,
+                description: "Time interval for HttpReporter to reporting InGame events"
             );
             _disableEventLogEntry = _preferencesCategory.CreateEntry
             (
@@ -90,7 +97,6 @@ namespace DeppartPrototypeHentaiPlayMod
         private void SetupEventReporter()
         {
             var eventReporterType = _eventReporterTypeEntry.Value;
-            var httpReporterUrl = _httpReporterUrlEntry.Value;
             var disableEventLog = _disableEventLogEntry.Value;
             LoggerInstance.Msg($"Using reporter: {eventReporterType}");
             switch (eventReporterType)
@@ -102,7 +108,12 @@ namespace DeppartPrototypeHentaiPlayMod
                     };
                     break;
                 case nameof(HttpReporter):
-                    _eventReporter = new HttpReporter(this, httpReporterUrl)
+                    _eventReporter = new HttpReporter
+                    (
+                        this,
+                        _httpReporterUrlEntry.Value,
+                        _httpReportInGameInterval.Value
+                    )
                     {
                         DisableEventLog = disableEventLog
                     };

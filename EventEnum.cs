@@ -4,6 +4,7 @@ namespace DeppartPrototypeHentaiPlayMod
     {
         GameEnter,
         GameExit,
+        InGame,
         BulbBroken,
         ZombieRun,
         EnterLevel1,

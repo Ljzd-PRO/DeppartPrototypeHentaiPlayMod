@@ -9,9 +9,12 @@ namespace DeppartPrototypeHentaiPlayMod
     public class HttpReporter : BaseReporter
     {
         private readonly HttpClient _httpClient = new HttpClient();
+        private readonly int _reportInGameInterval;
         private readonly string _reportUrl;
+        private bool _reportInGameStarted;
+        private bool _stopReportingInGame;
 
-        public HttpReporter(HentaiPlayMod melonMod, string reportUrl) : base(melonMod)
+        public HttpReporter(HentaiPlayMod melonMod, string reportUrl, int reportInGameInterval) : base(melonMod)
         {
             try
             {
@@ -24,6 +27,7 @@ namespace DeppartPrototypeHentaiPlayMod
             }
 
             _reportUrl = reportUrl;
+            _reportInGameInterval = reportInGameInterval;
         }
 
         private void SendRequest(Dictionary<string, string> query)
@@ -40,6 +44,39 @@ namespace DeppartPrototypeHentaiPlayMod
                     MelonMod.LoggerInstance.Error($"{nameof(HttpReporter)}: Report failed", e);
                 }
             }).Start();
+        }
+
+        private void KeepReportingInGame()
+        {
+            if (_reportInGameStarted)
+                return;
+            var query = new Dictionary<string, string>
+            {
+                { "event_name", EventEnum.InGame.ToString() }
+            };
+            new Thread(() =>
+            {
+                while (!_stopReportingInGame)
+                {
+                    query["t"] = DateTimeOffset.Now.ToUnixTimeSeconds().ToString();
+                    try
+                    {
+                        _httpClient.GetAsync(Utils.BuildRequestUri(_reportUrl, query)).Wait();
+                    }
+                    catch (Exception e)
+                    {
+                        MelonMod.LoggerInstance.Error($"{nameof(HttpReporter)}: Report failed", e);
+                    }
+
+                    Thread.Sleep(_reportInGameInterval);
+                }
+            }).Start();
+            _reportInGameStarted = true;
+        }
+
+        private void StopReportingInGame()
+        {
+            _stopReportingInGame = true;
         }
 
         public override void ReportActivateEvent(string eventName)
@@ -75,6 +112,7 @@ namespace DeppartPrototypeHentaiPlayMod
                     { "event_name", EventEnum.GameEnter.ToString() }
                 }
             );
+            KeepReportingInGame();
         }
 
         public override void ReportGameExitEvent()
@@ -86,6 +124,7 @@ namespace DeppartPrototypeHentaiPlayMod
                     { "event_name", EventEnum.GameExit.ToString() }
                 }
             );
+            StopReportingInGame();
         }
 
         public override void ReportShot()
