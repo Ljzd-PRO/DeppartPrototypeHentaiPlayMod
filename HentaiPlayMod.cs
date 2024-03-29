@@ -64,6 +64,11 @@ namespace DeppartPrototypeHentaiPlayMod
             ReportPlayerDied();
         }
 
+        public override void OnUpdate()
+        {
+            ReportShot();
+        }
+
         public override void OnSceneWasInitialized(int buildIndex, string sceneName)
         {
             _eventReporter.ReportGameEnterEvent();
@@ -183,6 +188,19 @@ namespace DeppartPrototypeHentaiPlayMod
             }
 
             UpdateEventStatus(EventEnum.PlayerDied.ToString(), gameObject.gameObject.activeSelf);
+        }
+
+        private void ReportShot()
+        {
+            var gameObject = GameObject.Find("/First Person Controller/First Person Camera/Armpist");
+            if (gameObject == null)
+                return;
+            var pistolObject = gameObject.GetComponent<pistol>();
+            if (
+                gameObject.activeSelf &&
+                !(pistolObject.YBRAL > 0) && !(pistolObject.pl.walking == 2 || pistolObject.stene.vstene) &&
+                Input.GetButtonDown("SHOOT") && !pistolObject.cantshoot && pistolObject.ammo > 0)
+                _eventReporter.ReportShot();
         }
     }
 }

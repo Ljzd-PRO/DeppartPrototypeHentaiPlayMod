@@ -6,5 +6,6 @@ namespace DeppartPrototypeHentaiPlayMod
         void ReportDeactivateEvent(string eventName);
         void ReportGameEnterEvent();
         void ReportGameExitEvent();
+        void ReportShot();
     }
 }

@@ -28,5 +28,10 @@ namespace DeppartPrototypeHentaiPlayMod
         {
             MelonMod.LoggerInstance.Msg("GameExitEvent");
         }
+
+        public virtual void ReportShot()
+        {
+            MelonMod.LoggerInstance.Msg($"Event: {EventEnum.Shot.ToString()}");
+        }
     }
 }

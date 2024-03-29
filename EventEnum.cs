@@ -9,6 +9,7 @@ namespace DeppartPrototypeHentaiPlayMod
         EnterLevel1,
         Level1Zombie,
         EndZombie,
-        PlayerDied
+        PlayerDied,
+        Shot
     }
 }

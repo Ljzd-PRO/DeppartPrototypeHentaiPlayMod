@@ -86,5 +86,16 @@ namespace DeppartPrototypeHentaiPlayMod
                 }
             );
         }
+
+        public override void ReportShot()
+        {
+            base.ReportShot();
+            SendRequest(
+                new Dictionary<string, string>
+                {
+                    { "event_name", EventEnum.Shot.ToString() }
+                }
+            );
+        }
     }
 }
