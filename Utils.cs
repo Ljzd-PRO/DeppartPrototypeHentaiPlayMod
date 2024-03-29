@@ -10,8 +10,10 @@ namespace DeppartPrototypeHentaiPlayMod
         {
             var queryCollection = HttpUtility.ParseQueryString(string.Empty);
             foreach (var kvp in query) queryCollection[kvp.Key] = kvp.Value;
-            var uriBuilder = new UriBuilder(url);
-            uriBuilder.Query = queryCollection.ToString();
+            var uriBuilder = new UriBuilder(url)
+            {
+                Query = queryCollection.ToString()
+            };
             return uriBuilder.Uri;
         }
     }
