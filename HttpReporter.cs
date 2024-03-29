@@ -30,6 +30,7 @@ namespace DeppartPrototypeHentaiPlayMod
         {
             new Thread(() =>
             {
+                query["t"] = DateTimeOffset.Now.ToUnixTimeSeconds().ToString();
                 try
                 {
                     _httpClient.GetAsync(Utils.BuildRequestUri(_reportUrl, query)).Wait();
