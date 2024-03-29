@@ -22,6 +22,8 @@ namespace DeppartPrototypeHentaiPlayMod
             { EventEnum.PlayerDied.ToString(), false }
         };
 
+        private MelonPreferences_Entry<bool> _disableEventLogEntry;
+
         private IEventReporter _eventReporter;
         private MelonPreferences_Entry<string> _eventReporterTypeEntry;
         private MelonPreferences_Entry<string> _httpReporterUrlEntry;
@@ -46,6 +48,12 @@ namespace DeppartPrototypeHentaiPlayMod
                 "HttpReporterUrl",
                 "http://127.0.0.1:7788/report",
                 description: "Report URL for HttpReporter"
+            );
+            _disableEventLogEntry = _preferencesCategory.CreateEntry
+            (
+                "DisableEventLog",
+                false,
+                description: "Not to report events to Console"
             );
         }
 
@@ -83,14 +91,21 @@ namespace DeppartPrototypeHentaiPlayMod
         {
             var eventReporterType = _eventReporterTypeEntry.Value;
             var httpReporterUrl = _httpReporterUrlEntry.Value;
+            var disableEventLog = _disableEventLogEntry.Value;
             LoggerInstance.Msg($"Using reporter: {eventReporterType}");
             switch (eventReporterType)
             {
                 case nameof(BaseReporter):
-                    _eventReporter = new BaseReporter(this);
+                    _eventReporter = new BaseReporter(this)
+                    {
+                        DisableEventLog = disableEventLog
+                    };
                     break;
                 case nameof(HttpReporter):
-                    _eventReporter = new HttpReporter(this, httpReporterUrl);
+                    _eventReporter = new HttpReporter(this, httpReporterUrl)
+                    {
+                        DisableEventLog = disableEventLog
+                    };
                     break;
             }
         }
