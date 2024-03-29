@@ -44,7 +44,7 @@ namespace DeppartPrototypeHentaiPlayMod
             _httpReporterUrlEntry = _preferencesCategory.CreateEntry
             (
                 "HttpReporterUrl",
-                "http://127.0.0.1:7788",
+                "http://127.0.0.1:7788/report",
                 description: "Report URL for HttpReporter"
             );
         }
