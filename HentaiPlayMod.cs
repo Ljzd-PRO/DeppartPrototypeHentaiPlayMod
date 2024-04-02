@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DeppartPrototypeHentaiPlayMod;
 using MelonLoader;
@@ -22,6 +23,7 @@ namespace DeppartPrototypeHentaiPlayMod
             { EventEnum.PlayerDied.ToString(), false }
         };
 
+        private MelonPreferences_Entry<Uri> _buttPlugServerUrlEntry;
         private MelonPreferences_Entry<bool> _disableEventLogEntry;
 
         private IEventReporter _eventReporter;
@@ -41,7 +43,7 @@ namespace DeppartPrototypeHentaiPlayMod
             _eventReporterTypeEntry = _preferencesCategory.CreateEntry
             (
                 "EventReporterType",
-                nameof(BaseReporter),
+                nameof(ButtPlugReporter),
                 description: "Type of reporter that report events in game"
             );
             _httpReporterUrlEntry = _preferencesCategory.CreateEntry
@@ -61,6 +63,12 @@ namespace DeppartPrototypeHentaiPlayMod
                 "DisableEventLog",
                 false,
                 description: "Not to report events to Console"
+            );
+            _buttPlugServerUrlEntry = _preferencesCategory.CreateEntry
+            (
+                "ButtPlugServerUrl",
+                new Uri("ws://localhost:12345"),
+                description: "Websocket URL of ButtPlug server (Intiface Central)"
             );
         }
 
@@ -97,28 +105,25 @@ namespace DeppartPrototypeHentaiPlayMod
         private void SetupEventReporter()
         {
             var eventReporterType = _eventReporterTypeEntry.Value;
-            var disableEventLog = _disableEventLogEntry.Value;
             LoggerInstance.Msg($"Using reporter: {eventReporterType}");
             switch (eventReporterType)
             {
                 case nameof(BaseReporter):
-                    _eventReporter = new BaseReporter(this)
-                    {
-                        DisableEventLog = disableEventLog
-                    };
+                    _eventReporter = new BaseReporter(this);
                     break;
                 case nameof(HttpReporter):
-                    _eventReporter = new HttpReporter
-                    (
+                    _eventReporter = new HttpReporter(
                         this,
                         _httpReporterUrlEntry.Value,
                         _httpReportInGameInterval.Value
-                    )
-                    {
-                        DisableEventLog = disableEventLog
-                    };
+                    );
+                    break;
+                case nameof(ButtPlugReporter):
+                    _eventReporter = new ButtPlugReporter(this, _buttPlugServerUrlEntry.Value);
                     break;
             }
+
+            if (_eventReporter is BaseReporter baseReporter) baseReporter.DisableEventLog = _disableEventLogEntry.Value;
         }
 
         private void UpdateEventStatus(string eventName, bool isActivate)
