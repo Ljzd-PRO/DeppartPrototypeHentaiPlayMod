@@ -9,7 +9,8 @@ namespace DeppartPrototypeHentaiPlayMod
     public class ButtPlugReporter : BaseReporter
     {
         private readonly ButtplugClient _buttplugClient;
-
+        private readonly Mutex _mutexLock = new Mutex();
+        
         public ButtPlugReporter(HentaiPlayMod melonMod, Uri buttPlugServerUrl) : base(melonMod)
         {
             _buttplugClient = new ButtplugClient(MelonMod.Info.Name);
@@ -41,15 +42,23 @@ namespace DeppartPrototypeHentaiPlayMod
         {
             new Thread(() =>
             {
-                foreach (var device in _buttplugClient.Devices)
-                    try
-                    {
-                        device.VibrateAsync(vibrateSpeed).Wait();
-                    }
-                    catch (ButtplugDeviceException e)
-                    {
-                        MelonMod.LoggerInstance.Msg($"ButtPlug device {device.Name} vibrate failed", e);
-                    }
+                _mutexLock.WaitOne();
+                try
+                {
+                    foreach (var device in _buttplugClient.Devices)
+                        try
+                        {
+                            device.VibrateAsync(vibrateSpeed).Wait();
+                        }
+                        catch (ButtplugDeviceException e)
+                        {
+                            MelonMod.LoggerInstance.Msg($"ButtPlug device {device.Name} vibrate failed", e);
+                        }
+                }
+                finally
+                {
+                    _mutexLock.ReleaseMutex();
+                }
             }).Start();
         }
 
