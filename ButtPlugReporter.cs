@@ -35,6 +35,10 @@ namespace DeppartPrototypeHentaiPlayMod
                 {
                     MelonMod.LoggerInstance.Msg("ButtPlug handshake failed", e);
                 }
+                catch (AggregateException e)
+                {
+                    MelonMod.LoggerInstance.Msg("Failed to connect to ButtPlug server", e);
+                }
 
                 _buttplugClient.StartScanningAsync().Wait();
             }).Start();
