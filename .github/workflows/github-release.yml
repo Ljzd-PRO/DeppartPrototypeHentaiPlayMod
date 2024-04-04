@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   build:
-    uses: ./.github/workflows/dotnet-desktop.yml
+    uses: ./.github/workflows/dotnet.yml
 
   release:
     runs-on: ubuntu-latest
@@ -29,11 +29,14 @@ jobs:
           cd artifact
           for dir in */; do
             dir_name=$(basename "$dir")
+            new_dir_name="${dir_name}-$(basename ${{ github.ref }})"
             zip_file_name="${dir_name}-$(basename ${{ github.ref }}).zip"
-            zip -r "${zip_file_name}" "${dir}"
+            mkdir ${new_dir_name}
+            find ${dir} -type f -name '*.dll' ! -name 'Assembly-CSharp.dll' ! -name 'UnityEngine.dll' ! -name 'MelonLoader.dll' -exec mv ${dir}/{} ${new_dir_name} \;
+            zip -r "${zip_file_name}" "${new_dir_name}"
           done
           cd ..
-
+          
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
