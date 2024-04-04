@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using DeppartPrototypeHentaiPlayMod;
 using MelonLoader;
@@ -23,7 +22,10 @@ namespace DeppartPrototypeHentaiPlayMod
             { EventEnum.PlayerDied.ToString(), false }
         };
 
-        private MelonPreferences_Entry<Uri> _buttPlugServerUrlEntry;
+        private MelonPreferences_Entry<double> _buttPlugActiveVibrateScalar;
+
+        private MelonPreferences_Entry<string> _buttPlugServerUrlEntry;
+        private MelonPreferences_Entry<double> _buttPlugShotVibrateScalar;
         private MelonPreferences_Entry<bool> _disableEventLogEntry;
 
         private IEventReporter _eventReporter;
@@ -44,7 +46,8 @@ namespace DeppartPrototypeHentaiPlayMod
             (
                 "EventReporterType",
                 nameof(ButtPlugReporter),
-                description: "Type of reporter that report events in game"
+                description: "Type of reporter that report events in game " +
+                             $"(Available: {nameof(BaseReporter)}, {nameof(HttpReporter)}, {nameof(ButtPlugReporter)})"
             );
             _httpReporterUrlEntry = _preferencesCategory.CreateEntry
             (
@@ -67,8 +70,20 @@ namespace DeppartPrototypeHentaiPlayMod
             _buttPlugServerUrlEntry = _preferencesCategory.CreateEntry
             (
                 "ButtPlugServerUrl",
-                new Uri("ws://localhost:12345"),
+                "ws://localhost:12345",
                 description: "Websocket URL of ButtPlug server (Intiface Central)"
+            );
+            _buttPlugActiveVibrateScalar = _preferencesCategory.CreateEntry
+            (
+                "ButtPlugActiveVibrateScalar",
+                0.5,
+                description: "Set the ButtPlug vibrate scalar when game events active"
+            );
+            _buttPlugShotVibrateScalar = _preferencesCategory.CreateEntry
+            (
+                "ButtPlugShotVibrateScalar",
+                1.0,
+                description: "Set the ButtPlug vibrate scalar when gun shot"
             );
         }
 
@@ -119,7 +134,13 @@ namespace DeppartPrototypeHentaiPlayMod
                     );
                     break;
                 case nameof(ButtPlugReporter):
-                    _eventReporter = new ButtPlugReporter(this, _buttPlugServerUrlEntry.Value);
+                    _eventReporter = new ButtPlugReporter
+                    (
+                        this,
+                        _buttPlugServerUrlEntry.Value,
+                        _buttPlugActiveVibrateScalar.Value,
+                        _buttPlugShotVibrateScalar.Value
+                    );
                     break;
             }
 

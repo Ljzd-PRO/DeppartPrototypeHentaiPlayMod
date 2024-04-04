@@ -9,12 +9,22 @@ namespace DeppartPrototypeHentaiPlayMod
 {
     public class ButtPlugReporter : BaseReporter
     {
+        private readonly double _activeVibrateScalar;
         private readonly ButtplugClient _buttplugClient;
         private readonly Mutex _mutexLock = new Mutex();
+        private readonly double _shotVibrateScalar;
         private double _baseVibrateScalar;
 
-        public ButtPlugReporter(HentaiPlayMod melonMod, Uri buttPlugServerUrl) : base(melonMod)
+        public ButtPlugReporter
+        (
+            HentaiPlayMod melonMod,
+            string buttPlugServerUrl,
+            double activeVibrateScalar = 0.5,
+            double shotVibrateScalar = 1
+        ) : base(melonMod)
         {
+            _activeVibrateScalar = activeVibrateScalar;
+            _shotVibrateScalar = shotVibrateScalar;
             _buttplugClient = new ButtplugClient(MelonMod.Info.Name);
             _buttplugClient.DeviceAdded +=
                 (sender, args) => MelonMod.LoggerInstance.Msg($"ButtPlug device added: {args.Device.Name}");
@@ -22,7 +32,7 @@ namespace DeppartPrototypeHentaiPlayMod
                 (sender, args) => MelonMod.LoggerInstance.Msg($"ButtPlug device removed: {args.Device.Name}");
             _buttplugClient.ScanningFinished += (sender, args) =>
                 MelonMod.LoggerInstance.Msg($"ButtPlug scanning finished: {args}");
-            var connector = new ButtplugWebsocketConnector(buttPlugServerUrl);
+            var connector = new ButtplugWebsocketConnector(new Uri(buttPlugServerUrl));
             connector.Disconnected +=
                 (sender, args) => MelonMod.LoggerInstance.Msg($"ButtPlug scanning finished: {args}");
             new Thread(() =>
@@ -80,11 +90,11 @@ namespace DeppartPrototypeHentaiPlayMod
                 { EventEnum.BulbBroken.ToString(), EventEnum.ZombieRun.ToString(), EventEnum.EnterLevel1.ToString() };
             if (tempEvents.Contains(eventName))
             {
-                SendCommand(new[] { 0.5, _baseVibrateScalar }, 5000);
+                SendCommand(new[] { _activeVibrateScalar, _baseVibrateScalar }, 5000);
             }
             else
             {
-                _baseVibrateScalar = 0.5;
+                _baseVibrateScalar = _activeVibrateScalar;
                 SendCommand(new[] { _baseVibrateScalar });
             }
         }
@@ -111,7 +121,7 @@ namespace DeppartPrototypeHentaiPlayMod
         public override void ReportShot()
         {
             base.ReportShot();
-            SendCommand(new[] { 1, _baseVibrateScalar });
+            SendCommand(new[] { _shotVibrateScalar, _baseVibrateScalar });
         }
     }
 }
