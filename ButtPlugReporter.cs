@@ -17,9 +17,9 @@ namespace DeppartPrototypeHentaiPlayMod
         {
             _buttplugClient = new ButtplugClient(MelonMod.Info.Name);
             _buttplugClient.DeviceAdded +=
-                (sender, args) => MelonMod.LoggerInstance.Msg($"ButtPlug device added: {args}");
+                (sender, args) => MelonMod.LoggerInstance.Msg($"ButtPlug device added: {args.Device.Name}");
             _buttplugClient.DeviceRemoved +=
-                (sender, args) => MelonMod.LoggerInstance.Msg($"ButtPlug device removed: {args}");
+                (sender, args) => MelonMod.LoggerInstance.Msg($"ButtPlug device removed: {args.Device.Name}");
             _buttplugClient.ScanningFinished += (sender, args) =>
                 MelonMod.LoggerInstance.Msg($"ButtPlug scanning finished: {args}");
             var connector = new ButtplugWebsocketConnector(buttPlugServerUrl);
