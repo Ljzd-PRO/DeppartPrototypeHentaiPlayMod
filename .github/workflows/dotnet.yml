@@ -13,26 +13,26 @@ jobs:
     strategy:
       matrix:
         configuration: [Debug, Release]
-        
+    
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v2
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
 
-    - name: Setup NuGet
-      uses: NuGet/setup-nuget@v2
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v2
 
-    - name: Restore NuGet Packages
-      run: nuget restore DeppartPrototypeHentaiPlayMod.sln
- 
-    - name: Build and Publish Web App
-      run: msbuild DeppartPrototypeHentaiPlayMod.sln /p:Configuration=${{ matrix.configuration }}
- 
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: Mods
-        path: bin\Release
+      - name: Restore NuGet Packages
+        run: nuget restore DeppartPrototypeHentaiPlayMod.sln
+
+      - name: Build and Publish Web App
+        run: msbuild DeppartPrototypeHentaiPlayMod.sln /p:Configuration=${{ matrix.configuration }}
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mods
+          path: bin\${{ matrix.configuration }}
