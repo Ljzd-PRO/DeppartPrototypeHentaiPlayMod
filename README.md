@@ -8,12 +8,14 @@
 
 1. Install MelonLoader:
     - https://melonwiki.xyz/#/README?id=automated-installation
-2. Place the `Mods` directory under the game path.
-3. Install [Intiface® Central](https://intiface.com/central/)
-4. Launch Intiface® Central, start the engine server.
-5. Launch the game, connect you Buttplug device to Intiface® Central.
-6. (Optional) Configure the mod preference in `UserData\MelonPreferences.cfg` under the game path.
-7. Enjoy the game.
+2. Download latest release and extract:
+   - https://github.com/Ljzd-PRO/DeppartPrototypeHentaiPlayMod/releases/latest
+3. Place the `Mods` directory under the game path.
+4. Install [Intiface® Central](https://intiface.com/central/)
+5. Launch Intiface® Central, start the engine server.
+6. Launch the game, connect you Buttplug device to Intiface® Central.
+7. (Optional) Configure the mod preference in `UserData\MelonPreferences.cfg` under the game path.
+8. Enjoy the game.
 
 ## Preference
 
