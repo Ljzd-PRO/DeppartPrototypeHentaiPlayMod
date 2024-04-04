@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 using Buttplug.Client;
 using Buttplug.Client.Connectors.WebsocketConnector;
@@ -10,7 +11,8 @@ namespace DeppartPrototypeHentaiPlayMod
     {
         private readonly ButtplugClient _buttplugClient;
         private readonly Mutex _mutexLock = new Mutex();
-        
+        private double _baseVibrateScalar;
+
         public ButtPlugReporter(HentaiPlayMod melonMod, Uri buttPlugServerUrl) : base(melonMod)
         {
             _buttplugClient = new ButtplugClient(MelonMod.Info.Name);
@@ -38,7 +40,7 @@ namespace DeppartPrototypeHentaiPlayMod
             }).Start();
         }
 
-        private void SendRequest(double vibrateSpeed)
+        private void SendCommand(double[] scalars, int interval = 0)
         {
             new Thread(() =>
             {
@@ -48,7 +50,12 @@ namespace DeppartPrototypeHentaiPlayMod
                     foreach (var device in _buttplugClient.Devices)
                         try
                         {
-                            device.VibrateAsync(vibrateSpeed).Wait();
+                            foreach (var scalar in scalars)
+                            {
+                                device.VibrateAsync(scalar);
+                                if (interval != 0)
+                                    Thread.Sleep(interval);
+                            }
                         }
                         catch (ButtplugDeviceException e)
                         {
@@ -65,32 +72,42 @@ namespace DeppartPrototypeHentaiPlayMod
         public override void ReportActivateEvent(string eventName)
         {
             base.ReportActivateEvent(eventName);
-            SendRequest(0.5);
+            var tempEvents = new[]
+                { EventEnum.BulbBroken.ToString(), EventEnum.ZombieRun.ToString(), EventEnum.EnterLevel1.ToString() };
+            if (tempEvents.Contains(eventName))
+            {
+                SendCommand(new[] { 0.5, _baseVibrateScalar }, 5000);
+            }
+            else
+            {
+                _baseVibrateScalar = 0.5;
+                SendCommand(new[] { _baseVibrateScalar });
+            }
         }
 
         public override void ReportDeactivateEvent(string eventName)
         {
             base.ReportDeactivateEvent(eventName);
-            SendRequest(0);
+            _baseVibrateScalar = 0;
+            SendCommand(new[] { _baseVibrateScalar });
         }
 
         public override void ReportGameEnterEvent()
         {
             base.ReportGameEnterEvent();
-            SendRequest(0);
+            SendCommand(new[] { _baseVibrateScalar });
         }
 
         public override void ReportGameExitEvent()
         {
             base.ReportGameExitEvent();
-            SendRequest(0);
+            SendCommand(new[] { _baseVibrateScalar });
         }
 
         public override void ReportShot()
         {
             base.ReportShot();
-            SendRequest(1);
-            SendRequest(0);
+            SendCommand(new[] { 1, _baseVibrateScalar });
         }
     }
 }
