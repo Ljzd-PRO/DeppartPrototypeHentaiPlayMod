@@ -95,7 +95,7 @@
         </Reference>
         <Reference Include="System.Xml"/>
         <Reference Include="UnityEngine">
-            <HintPath>C:\Program Files\Unity 2023.2.14f1c1\Editor\Data\Managed\UnityEngine.dll</HintPath>
+            <HintPath>UnityEngine.dll</HintPath>
         </Reference>
     </ItemGroup>
     <ItemGroup>
