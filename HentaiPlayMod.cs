@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DeppartPrototypeHentaiPlayMod;
 using MelonLoader;
+using Newtonsoft.Json;
 using UnityEngine;
 
 [assembly: MelonInfo(typeof(HentaiPlayMod), "HentaiPlay", "1.0.0", "Ljzd-PRO")]
@@ -23,9 +25,9 @@ namespace DeppartPrototypeHentaiPlayMod
         };
 
         private MelonPreferences_Entry<double> _buttPlugActiveVibrateScalar;
-
         private MelonPreferences_Entry<string> _buttPlugServerUrlEntry;
         private MelonPreferences_Entry<double> _buttPlugShotVibrateScalar;
+        private MelonPreferences_Entry<string> _buttPlugVibrateCmdIndexList;
         private MelonPreferences_Entry<bool> _disableEventLogEntry;
 
         private IEventReporter _eventReporter;
@@ -85,6 +87,14 @@ namespace DeppartPrototypeHentaiPlayMod
                 1.0,
                 description: "Set the ButtPlug vibrate scalar when gun shot"
             );
+            _buttPlugVibrateCmdIndexList = _preferencesCategory.CreateEntry
+            (
+                "ButtPlugVibrateCmdIndexList",
+                "[]",
+                description:
+                "Set the index of ButtPlug vibrate scalar commands, you can set multiple index or empty as default. (e.g. [0,1])"
+            );
+            MelonPreferences.Save();
         }
 
         public override void OnLateInitializeMelon()
@@ -134,13 +144,22 @@ namespace DeppartPrototypeHentaiPlayMod
                     );
                     break;
                 case nameof(ButtPlugReporter):
-                    _eventReporter = new ButtPlugReporter
-                    (
-                        this,
-                        _buttPlugServerUrlEntry.Value,
-                        _buttPlugActiveVibrateScalar.Value,
-                        _buttPlugShotVibrateScalar.Value
-                    );
+                    try
+                    {
+                        _eventReporter = new ButtPlugReporter
+                        (
+                            this,
+                            _buttPlugServerUrlEntry.Value,
+                            _buttPlugActiveVibrateScalar.Value,
+                            _buttPlugShotVibrateScalar.Value,
+                            JsonConvert.DeserializeObject<uint[]>(_buttPlugVibrateCmdIndexList.Value)
+                        );
+                    }
+                    catch (Exception e)
+                    {
+                        LoggerInstance.Error($"ButtPlugReporter reporter initialize failed: {e}");
+                    }
+
                     break;
             }
 

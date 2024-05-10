@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Buttplug.Client;
@@ -11,8 +12,12 @@ namespace DeppartPrototypeHentaiPlayMod
     {
         private readonly double _activeVibrateScalar;
         private readonly ButtplugClient _buttplugClient;
-        private readonly Mutex _mutexLock = new Mutex();
+
+        private readonly Dictionary<ButtplugClientDevice, Mutex> _deviceMutexMap =
+            new Dictionary<ButtplugClientDevice, Mutex>();
+
         private readonly double _shotVibrateScalar;
+        private readonly uint[] _vibrateCmdIndex;
         private double _baseVibrateScalar;
 
         public ButtPlugReporter
@@ -20,16 +25,26 @@ namespace DeppartPrototypeHentaiPlayMod
             HentaiPlayMod melonMod,
             string buttPlugServerUrl,
             double activeVibrateScalar = 0.5,
-            double shotVibrateScalar = 1
+            double shotVibrateScalar = 1,
+            uint[] vibrateCmdIndex = null
         ) : base(melonMod)
         {
             _activeVibrateScalar = activeVibrateScalar;
             _shotVibrateScalar = shotVibrateScalar;
+            _vibrateCmdIndex = vibrateCmdIndex;
             _buttplugClient = new ButtplugClient(MelonMod.Info.Name);
             _buttplugClient.DeviceAdded +=
-                (sender, args) => MelonMod.LoggerInstance.Msg($"ButtPlug device added: {args.Device.Name}");
+                (sender, args) =>
+                {
+                    MelonMod.LoggerInstance.Msg($"ButtPlug device added: {args.Device.Name}");
+                    _deviceMutexMap.Add(args.Device, new Mutex());
+                };
             _buttplugClient.DeviceRemoved +=
-                (sender, args) => MelonMod.LoggerInstance.Msg($"ButtPlug device removed: {args.Device.Name}");
+                (sender, args) =>
+                {
+                    MelonMod.LoggerInstance.Msg($"ButtPlug device removed: {args.Device.Name}");
+                    _deviceMutexMap.Remove(args.Device);
+                };
             _buttplugClient.ScanningFinished += (sender, args) =>
                 MelonMod.LoggerInstance.Msg($"ButtPlug scanning finished: {args}");
             var connector = new ButtplugWebsocketConnector(new Uri(buttPlugServerUrl));
@@ -56,31 +71,31 @@ namespace DeppartPrototypeHentaiPlayMod
 
         private void SendCommand(double[] scalars, int interval = 0)
         {
-            new Thread(() =>
-            {
-                _mutexLock.WaitOne();
-                try
+            foreach (var device in _buttplugClient.Devices)
+                new Thread(() =>
                 {
-                    foreach (var device in _buttplugClient.Devices)
-                        try
+                    _deviceMutexMap[device].WaitOne();
+                    try
+                    {
+                        foreach (var scalar in scalars)
                         {
-                            foreach (var scalar in scalars)
-                            {
+                            if (_vibrateCmdIndex == null || _vibrateCmdIndex.Length == 0)
                                 device.VibrateAsync(scalar);
-                                if (interval != 0)
-                                    Thread.Sleep(interval);
-                            }
+                            else
+                                device.VibrateAsync(_vibrateCmdIndex.Select(index => (index, scalar)));
+                            if (interval != 0)
+                                Thread.Sleep(interval);
                         }
-                        catch (ButtplugDeviceException e)
-                        {
-                            MelonMod.LoggerInstance.Msg($"ButtPlug device {device.Name} vibrate failed", e);
-                        }
-                }
-                finally
-                {
-                    _mutexLock.ReleaseMutex();
-                }
-            }).Start();
+                    }
+                    catch (ButtplugDeviceException e)
+                    {
+                        MelonMod.LoggerInstance.Msg($"ButtPlug device {device.Name} vibrate failed", e);
+                    }
+                    finally
+                    {
+                        _deviceMutexMap[device].ReleaseMutex();
+                    }
+                }).Start();
         }
 
         public override void ReportActivateEvent(string eventName)
