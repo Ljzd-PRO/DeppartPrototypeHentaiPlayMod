@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Buttplug.Core.Messages;
 using DeppartPrototypeHentaiPlayMod;
 using MelonLoader;
 using UnityEngine;
@@ -24,9 +25,10 @@ namespace DeppartPrototypeHentaiPlayMod
         };
 
         private MelonPreferences_Entry<double> _buttPlugActiveVibrateScalar;
+        private MelonPreferences_Entry<ButtPlugAdditionalScalar[]> _buttPlugAdditionalScalarList;
         private MelonPreferences_Entry<string> _buttPlugServerUrlEntry;
         private MelonPreferences_Entry<double> _buttPlugShotVibrateScalar;
-        private MelonPreferences_Entry<string> _buttPlugVibrateCmdIndexList;
+        private MelonPreferences_Entry<uint[]> _buttPlugVibrateCmdIndexList;
         private MelonPreferences_Entry<int> _buttPlugVibrateDuration;
         private MelonPreferences_Entry<bool> _disableEventLogEntry;
 
@@ -97,9 +99,32 @@ namespace DeppartPrototypeHentaiPlayMod
             _buttPlugVibrateCmdIndexList = _preferencesCategory.CreateEntry
             (
                 "ButtPlugVibrateCmdIndexList",
-                "[]",
+                new uint[] { },
                 description:
                 "Set the index of ButtPlug vibrate scalar commands, you can set multiple index or empty as default. (e.g. [0,1])"
+            );
+            _buttPlugAdditionalScalarList = _preferencesCategory.CreateEntry
+            (
+                "ButtPlugAdditionalScalarList",
+                new[]
+                {
+                    new ButtPlugAdditionalScalar
+                    {
+                        Enable = false,
+                        ActuatorType = ActuatorType.Oscillate,
+                        Index = 0,
+                        Scalar = 0.5
+                    },
+                    new ButtPlugAdditionalScalar
+                    {
+                        Enable = false,
+                        ActuatorType = ActuatorType.Inflate,
+                        Index = 0,
+                        Scalar = 0.5
+                    }
+                },
+                description:
+                "Set the additional ButtPlug scalar commands, which called during vibrate (It will set to 0 after vibrate stop)"
             );
             MelonPreferences.Save();
         }
@@ -160,7 +185,8 @@ namespace DeppartPrototypeHentaiPlayMod
                             _buttPlugServerUrlEntry,
                             _buttPlugShotVibrateScalar,
                             _buttPlugVibrateCmdIndexList,
-                            _buttPlugVibrateDuration
+                            _buttPlugVibrateDuration,
+                            _buttPlugAdditionalScalarList
                         );
                     }
                     catch (Exception e)

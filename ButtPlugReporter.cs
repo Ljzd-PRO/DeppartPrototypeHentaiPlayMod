@@ -5,22 +5,32 @@ using System.Threading;
 using Buttplug.Client;
 using Buttplug.Client.Connectors.WebsocketConnector;
 using Buttplug.Core;
+using Buttplug.Core.Messages;
 using MelonLoader;
-using Newtonsoft.Json;
 
 namespace DeppartPrototypeHentaiPlayMod
 {
+    public struct ButtPlugAdditionalScalar
+    {
+        public bool Enable;
+        public ActuatorType ActuatorType;
+        public uint Index;
+        public double Scalar;
+    }
+
     public class ButtPlugReporter : BaseReporter
     {
         private readonly MelonPreferences_Entry<double> _buttPlugActiveVibrateScalar;
+        private readonly MelonPreferences_Entry<ButtPlugAdditionalScalar[]> _buttPlugAdditionalScalarList;
         private readonly ButtplugClient _buttplugClient;
         private readonly MelonPreferences_Entry<int> _buttPlugShotVibrateDuration;
         private readonly MelonPreferences_Entry<double> _buttPlugShotVibrateScalar;
+        private readonly MelonPreferences_Entry<uint[]> _buttPlugVibrateCmdIndexList;
 
         private readonly Dictionary<ButtplugClientDevice, Mutex> _deviceMutexMap =
             new Dictionary<ButtplugClientDevice, Mutex>();
 
-        private readonly uint[] _vibrateCmdIndex;
+
         private double _baseVibrateScalar;
 
         public ButtPlugReporter
@@ -29,14 +39,16 @@ namespace DeppartPrototypeHentaiPlayMod
             MelonPreferences_Entry<double> buttPlugActiveVibrateScalar,
             MelonPreferences_Entry<string> buttPlugServerUrlEntry,
             MelonPreferences_Entry<double> buttPlugShotVibrateScalar,
-            MelonPreferences_Entry<string> buttPlugVibrateCmdIndexList,
-            MelonPreferences_Entry<int> buttPlugShotVibrateDuration
+            MelonPreferences_Entry<uint[]> buttPlugVibrateCmdIndexList,
+            MelonPreferences_Entry<int> buttPlugShotVibrateDuration,
+            MelonPreferences_Entry<ButtPlugAdditionalScalar[]> buttPlugAdditionalScalarList
         ) : base(melonMod)
         {
             _buttPlugActiveVibrateScalar = buttPlugActiveVibrateScalar;
             _buttPlugShotVibrateScalar = buttPlugShotVibrateScalar;
             _buttPlugShotVibrateDuration = buttPlugShotVibrateDuration;
-            _vibrateCmdIndex = JsonConvert.DeserializeObject<uint[]>(buttPlugVibrateCmdIndexList.Value);
+            _buttPlugAdditionalScalarList = buttPlugAdditionalScalarList;
+            _buttPlugVibrateCmdIndexList = buttPlugVibrateCmdIndexList;
             _buttplugClient = new ButtplugClient(MelonMod.Info.Name);
             _buttplugClient.DeviceAdded +=
                 (sender, args) =>
@@ -84,10 +96,22 @@ namespace DeppartPrototypeHentaiPlayMod
                     {
                         foreach (var scalar in scalars)
                         {
-                            if (_vibrateCmdIndex == null || _vibrateCmdIndex.Length == 0)
+                            if (_buttPlugVibrateCmdIndexList.Value.Length == 0)
                                 device.VibrateAsync(scalar);
                             else
-                                device.VibrateAsync(_vibrateCmdIndex.Select(index => (index, scalar)));
+                                device.VibrateAsync(
+                                    _buttPlugVibrateCmdIndexList.Value.Select(index => (index, scalar)));
+                            foreach (var cmdInfo in _buttPlugAdditionalScalarList.Value)
+                                if (cmdInfo.Enable)
+                                    device.ScalarAsync(
+                                        new ScalarCmd.ScalarSubcommand(
+                                            cmdInfo.Index,
+                                            scalar.Equals(_baseVibrateScalar) && _baseVibrateScalar == 0
+                                                ? 0
+                                                : cmdInfo.Scalar,
+                                            cmdInfo.ActuatorType
+                                        )
+                                    );
                             if (interval != 0)
                                 Thread.Sleep(interval);
                         }
