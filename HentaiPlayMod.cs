@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using DeppartPrototypeHentaiPlayMod;
 using MelonLoader;
-using Newtonsoft.Json;
 using UnityEngine;
 
 [assembly: MelonInfo(typeof(HentaiPlayMod), "HentaiPlay", "1.0.0", "Ljzd-PRO")]
@@ -139,8 +138,8 @@ namespace DeppartPrototypeHentaiPlayMod
                 case nameof(HttpReporter):
                     _eventReporter = new HttpReporter(
                         this,
-                        _httpReporterUrlEntry.Value,
-                        _httpReportInGameInterval.Value
+                        _httpReporterUrlEntry,
+                        _httpReportInGameInterval
                     );
                     break;
                 case nameof(ButtPlugReporter):
@@ -149,10 +148,10 @@ namespace DeppartPrototypeHentaiPlayMod
                         _eventReporter = new ButtPlugReporter
                         (
                             this,
-                            _buttPlugServerUrlEntry.Value,
-                            _buttPlugActiveVibrateScalar.Value,
-                            _buttPlugShotVibrateScalar.Value,
-                            JsonConvert.DeserializeObject<uint[]>(_buttPlugVibrateCmdIndexList.Value)
+                            _buttPlugActiveVibrateScalar,
+                            _buttPlugServerUrlEntry,
+                            _buttPlugShotVibrateScalar,
+                            _buttPlugVibrateCmdIndexList
                         );
                     }
                     catch (Exception e)

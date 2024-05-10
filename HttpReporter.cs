@@ -3,18 +3,23 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading;
+using MelonLoader;
 
 namespace DeppartPrototypeHentaiPlayMod
 {
     public class HttpReporter : BaseReporter
     {
         private readonly HttpClient _httpClient = new HttpClient();
-        private readonly int _reportInGameInterval;
-        private readonly string _reportUrl;
+        private readonly MelonPreferences_Entry<string> _httpReporterUrlEntry;
+        private readonly MelonPreferences_Entry<int> _httpReportInGameInterval;
         private bool _reportInGameStarted;
         private bool _stopReportingInGame;
 
-        public HttpReporter(HentaiPlayMod melonMod, string reportUrl, int reportInGameInterval) : base(melonMod)
+        public HttpReporter(
+            HentaiPlayMod melonMod,
+            MelonPreferences_Entry<string> httpReporterUrlEntry,
+            MelonPreferences_Entry<int> httpReportInGameInterval
+        ) : base(melonMod)
         {
             try
             {
@@ -26,8 +31,8 @@ namespace DeppartPrototypeHentaiPlayMod
                 throw;
             }
 
-            _reportUrl = reportUrl;
-            _reportInGameInterval = reportInGameInterval;
+            _httpReporterUrlEntry = httpReporterUrlEntry;
+            _httpReportInGameInterval = httpReportInGameInterval;
         }
 
         private void SendRequest(Dictionary<string, string> query)
@@ -37,7 +42,7 @@ namespace DeppartPrototypeHentaiPlayMod
                 query["t"] = DateTimeOffset.Now.ToUnixTimeSeconds().ToString();
                 try
                 {
-                    _httpClient.GetAsync(Utils.BuildRequestUri(_reportUrl, query)).Wait();
+                    _httpClient.GetAsync(Utils.BuildRequestUri(_httpReporterUrlEntry.Value, query)).Wait();
                 }
                 catch (Exception e)
                 {
@@ -61,14 +66,14 @@ namespace DeppartPrototypeHentaiPlayMod
                     query["t"] = DateTimeOffset.Now.ToUnixTimeSeconds().ToString();
                     try
                     {
-                        _httpClient.GetAsync(Utils.BuildRequestUri(_reportUrl, query)).Wait();
+                        _httpClient.GetAsync(Utils.BuildRequestUri(_httpReporterUrlEntry.Value, query)).Wait();
                     }
                     catch (Exception e)
                     {
                         MelonMod.LoggerInstance.Error($"{nameof(HttpReporter)}: Report failed", e);
                     }
 
-                    Thread.Sleep(_reportInGameInterval);
+                    Thread.Sleep(_httpReportInGameInterval.Value);
                 }
             }).Start();
             _reportInGameStarted = true;

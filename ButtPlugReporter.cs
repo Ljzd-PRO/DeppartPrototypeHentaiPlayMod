@@ -5,33 +5,35 @@ using System.Threading;
 using Buttplug.Client;
 using Buttplug.Client.Connectors.WebsocketConnector;
 using Buttplug.Core;
+using MelonLoader;
+using Newtonsoft.Json;
 
 namespace DeppartPrototypeHentaiPlayMod
 {
     public class ButtPlugReporter : BaseReporter
     {
-        private readonly double _activeVibrateScalar;
+        private readonly MelonPreferences_Entry<double> _buttPlugActiveVibrateScalar;
         private readonly ButtplugClient _buttplugClient;
+        private readonly MelonPreferences_Entry<double> _buttPlugShotVibrateScalar;
 
         private readonly Dictionary<ButtplugClientDevice, Mutex> _deviceMutexMap =
             new Dictionary<ButtplugClientDevice, Mutex>();
 
-        private readonly double _shotVibrateScalar;
         private readonly uint[] _vibrateCmdIndex;
         private double _baseVibrateScalar;
 
         public ButtPlugReporter
         (
             HentaiPlayMod melonMod,
-            string buttPlugServerUrl,
-            double activeVibrateScalar = 0.5,
-            double shotVibrateScalar = 1,
-            uint[] vibrateCmdIndex = null
+            MelonPreferences_Entry<double> buttPlugActiveVibrateScalar,
+            MelonPreferences_Entry<string> buttPlugServerUrlEntry,
+            MelonPreferences_Entry<double> buttPlugShotVibrateScalar,
+            MelonPreferences_Entry<string> buttPlugVibrateCmdIndexList
         ) : base(melonMod)
         {
-            _activeVibrateScalar = activeVibrateScalar;
-            _shotVibrateScalar = shotVibrateScalar;
-            _vibrateCmdIndex = vibrateCmdIndex;
+            _buttPlugActiveVibrateScalar = buttPlugActiveVibrateScalar;
+            _buttPlugShotVibrateScalar = buttPlugShotVibrateScalar;
+            _vibrateCmdIndex = JsonConvert.DeserializeObject<uint[]>(buttPlugVibrateCmdIndexList.Value);
             _buttplugClient = new ButtplugClient(MelonMod.Info.Name);
             _buttplugClient.DeviceAdded +=
                 (sender, args) =>
@@ -47,7 +49,7 @@ namespace DeppartPrototypeHentaiPlayMod
                 };
             _buttplugClient.ScanningFinished += (sender, args) =>
                 MelonMod.LoggerInstance.Msg($"ButtPlug scanning finished: {args}");
-            var connector = new ButtplugWebsocketConnector(new Uri(buttPlugServerUrl));
+            var connector = new ButtplugWebsocketConnector(new Uri(buttPlugServerUrlEntry.Value));
             connector.Disconnected +=
                 (sender, args) => MelonMod.LoggerInstance.Msg($"ButtPlug scanning finished: {args}");
             new Thread(() =>
@@ -105,11 +107,11 @@ namespace DeppartPrototypeHentaiPlayMod
                 { EventEnum.BulbBroken.ToString(), EventEnum.ZombieRun.ToString(), EventEnum.EnterLevel1.ToString() };
             if (tempEvents.Contains(eventName))
             {
-                SendCommand(new[] { _activeVibrateScalar, _baseVibrateScalar }, 5000);
+                SendCommand(new[] { _buttPlugActiveVibrateScalar.Value, _baseVibrateScalar }, 5000);
             }
             else
             {
-                _baseVibrateScalar = _activeVibrateScalar;
+                _baseVibrateScalar = _buttPlugActiveVibrateScalar.Value;
                 SendCommand(new[] { _baseVibrateScalar });
             }
         }
@@ -136,7 +138,7 @@ namespace DeppartPrototypeHentaiPlayMod
         public override void ReportShot()
         {
             base.ReportShot();
-            SendCommand(new[] { _shotVibrateScalar, _baseVibrateScalar });
+            SendCommand(new[] { _buttPlugShotVibrateScalar.Value, _baseVibrateScalar });
         }
     }
 }
