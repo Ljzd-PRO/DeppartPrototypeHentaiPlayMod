@@ -27,6 +27,7 @@ namespace DeppartPrototypeHentaiPlayMod
         private MelonPreferences_Entry<string> _buttPlugServerUrlEntry;
         private MelonPreferences_Entry<double> _buttPlugShotVibrateScalar;
         private MelonPreferences_Entry<string> _buttPlugVibrateCmdIndexList;
+        private MelonPreferences_Entry<int> _buttPlugVibrateDuration;
         private MelonPreferences_Entry<bool> _disableEventLogEntry;
 
         private IEventReporter _eventReporter;
@@ -85,6 +86,13 @@ namespace DeppartPrototypeHentaiPlayMod
                 "ButtPlugShotVibrateScalar",
                 1.0,
                 description: "Set the ButtPlug vibrate scalar when gun shot"
+            );
+            _buttPlugVibrateDuration = _preferencesCategory.CreateEntry
+            (
+                "ButtPlugVibrateDuration",
+                300,
+                description:
+                "Set the ButtPlug vibrate duration when gun shot (Millisecond)"
             );
             _buttPlugVibrateCmdIndexList = _preferencesCategory.CreateEntry
             (
@@ -151,7 +159,8 @@ namespace DeppartPrototypeHentaiPlayMod
                             _buttPlugActiveVibrateScalar,
                             _buttPlugServerUrlEntry,
                             _buttPlugShotVibrateScalar,
-                            _buttPlugVibrateCmdIndexList
+                            _buttPlugVibrateCmdIndexList,
+                            _buttPlugVibrateDuration
                         );
                     }
                     catch (Exception e)

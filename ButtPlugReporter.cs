@@ -14,6 +14,7 @@ namespace DeppartPrototypeHentaiPlayMod
     {
         private readonly MelonPreferences_Entry<double> _buttPlugActiveVibrateScalar;
         private readonly ButtplugClient _buttplugClient;
+        private readonly MelonPreferences_Entry<int> _buttPlugShotVibrateDuration;
         private readonly MelonPreferences_Entry<double> _buttPlugShotVibrateScalar;
 
         private readonly Dictionary<ButtplugClientDevice, Mutex> _deviceMutexMap =
@@ -28,11 +29,13 @@ namespace DeppartPrototypeHentaiPlayMod
             MelonPreferences_Entry<double> buttPlugActiveVibrateScalar,
             MelonPreferences_Entry<string> buttPlugServerUrlEntry,
             MelonPreferences_Entry<double> buttPlugShotVibrateScalar,
-            MelonPreferences_Entry<string> buttPlugVibrateCmdIndexList
+            MelonPreferences_Entry<string> buttPlugVibrateCmdIndexList,
+            MelonPreferences_Entry<int> buttPlugShotVibrateDuration
         ) : base(melonMod)
         {
             _buttPlugActiveVibrateScalar = buttPlugActiveVibrateScalar;
             _buttPlugShotVibrateScalar = buttPlugShotVibrateScalar;
+            _buttPlugShotVibrateDuration = buttPlugShotVibrateDuration;
             _vibrateCmdIndex = JsonConvert.DeserializeObject<uint[]>(buttPlugVibrateCmdIndexList.Value);
             _buttplugClient = new ButtplugClient(MelonMod.Info.Name);
             _buttplugClient.DeviceAdded +=
@@ -138,7 +141,10 @@ namespace DeppartPrototypeHentaiPlayMod
         public override void ReportShot()
         {
             base.ReportShot();
-            SendCommand(new[] { _buttPlugShotVibrateScalar.Value, _baseVibrateScalar });
+            SendCommand(
+                new[] { _buttPlugShotVibrateScalar.Value, _baseVibrateScalar },
+                _buttPlugShotVibrateDuration.Value
+            );
         }
     }
 }
