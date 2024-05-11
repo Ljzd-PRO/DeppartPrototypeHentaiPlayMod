@@ -36,4 +36,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.configuration }}
-          path: bin\${{ matrix.configuration }}
+          path: DeppartPrototypeHentaiPlayMod\bin\${{ matrix.configuration }}
