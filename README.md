@@ -5,6 +5,7 @@
 - Intiface® Central: https://intiface.com/central/
 
 ### About the game DeppartPrototype
+
 > Deppart is an indie first-person horror game with shooter elements. \
 > Be very careful, enemies kill you with one hit. \
 > https://n4ba.itch.io/deppart
@@ -85,7 +86,17 @@ Index = 0
 Scalar = 0.5
 ```
 
-## Example reporter handler for `HttpHandler`
+## About `HttpReporter`
+
+This is **OPTIONAL**, you can setup an HTTP server to handle events in the mod instead of using buttplug.
+
+Set the option `EventReporterType` in `UserData\MelonPreferences.cfg` to `"HttpReporter"` if you want to use this.
+
+### `HttpReporter` API
+
+Define in [`openapi.yaml`](openapi.yaml).
+
+### Example implementation for the server of `HttpReporter`
 
 ```python3
 import datetime
