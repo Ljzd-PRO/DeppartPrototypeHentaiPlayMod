@@ -33,33 +33,33 @@ ButtPlugShotVibrateScalar = 0.25
 ButtPlugVibrateDuration = 300
 
 # Set the index of ButtPlug vibrate scalar commands, you can set multiple index or empty as default. (e.g. [0,1])
-# * 郊狼 3.0 电源强度 (Vibrate) 命令序号，0, 1 即 A 通道和 B 通道
+# * 郊狼 3.0 电源强度 (Vibrate) 命令索引，0, 1 即 A 通道和 B 通道
 ButtPlugVibrateCmdIndexList = [ 0, 1, ]
 
 # Set the additional ButtPlug scalar commands, which called during vibrate (It will set to 0 after vibrate stop)
 
-# * 郊狼 3.0 波形频率 (Oscillate) 命令序号 2 (A通道)
+# * 郊狼 3.0 波形频率 (Oscillate) 命令索引 2 (A通道)
 [[HentaiPlay.ButtPlugAdditionalScalarList]]
 Enable = true
 ActuatorType = "Oscillate"
 Index = 2
 Scalar = 0.5
                                                   
-# * 郊狼 3.0 波形频率 (Oscillate) 命令序号 3 (B 通道)
+# * 郊狼 3.0 波形频率 (Oscillate) 命令索引 3 (B 通道)
 [[HentaiPlay.ButtPlugAdditionalScalarList]]
 Enable = true
 ActuatorType = "Oscillate"
 Index = 3
 Scalar = 0.5
 
-# * 郊狼 3.0 波形强度 (Inflate) 命令序号 4 (A 通道)
+# * 郊狼 3.0 波形强度 (Inflate) 命令索引 4 (A 通道)
 [[HentaiPlay.ButtPlugAdditionalScalarList]]
 Enable = true
 ActuatorType = "Inflate"
 Index = 4
 Scalar = 0.5
 
-# * 郊狼 3.0 波形强度 (Inflate) 命令序号 5 (B 通道)
+# * 郊狼 3.0 波形强度 (Inflate) 命令索引 5 (B 通道)
 [[HentaiPlay.ButtPlugAdditionalScalarList]]
 Enable = true
 ActuatorType = "Inflate"
