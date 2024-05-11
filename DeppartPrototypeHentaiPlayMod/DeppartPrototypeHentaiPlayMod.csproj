@@ -37,7 +37,7 @@
           <HintPath>Assembly-CSharp.dll</HintPath>
         </Reference>
         <Reference Include="Buttplug, Version=3.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-            <HintPath>packages\Buttplug.3.0.1\lib\netstandard2.0\Buttplug.dll</HintPath>
+            <HintPath>..\packages\Buttplug.3.0.1\lib\netstandard2.0\Buttplug.dll</HintPath>
         </Reference>
         <Reference Include="Buttplug.Client.Connectors.WebsocketConnector, Version=3.0.1.0, Culture=neutral, processorArchitecture=MSIL">
           <HintPath>..\packages\Buttplug.Client.Connectors.WebsocketConnector.3.0.1\lib\netstandard2.0\Buttplug.Client.Connectors.WebsocketConnector.dll</HintPath>
@@ -46,11 +46,11 @@
           <HintPath>..\packages\deniszykov.WebSocketListener.4.2.16\lib\net45\deniszykov.WebSocketListener.dll</HintPath>
         </Reference>
         <Reference Include="MelonLoader, Version=0.6.1.0, Culture=neutral, processorArchitecture=MSIL">
-            <HintPath>packages\LavaGang.MelonLoader.0.6.1\lib\net35\MelonLoader.dll</HintPath>
+            <HintPath>..\packages\LavaGang.MelonLoader.0.6.1\lib\net35\MelonLoader.dll</HintPath>
         </Reference>
         <Reference Include="Microsoft.CSharp" />
         <Reference Include="Mono.HttpUtility, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-            <HintPath>packages\Mono.HttpUtility.1.0.0.1\lib\net40\Mono.HttpUtility.dll</HintPath>
+            <HintPath>..\packages\Mono.HttpUtility.1.0.0.1\lib\net40\Mono.HttpUtility.dll</HintPath>
         </Reference>
         <Reference Include="mscorlib" />
         <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
