@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeppartPrototypeHentaiPlayMod", "DeppartPrototypeHentaiPlayMod.csproj", "{A68AC8D6-276B-4A21-ACED-1255E3708EF5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeppartPrototypeHentaiPlayMod", "DeppartPrototypeHentaiPlayMod\DeppartPrototypeHentaiPlayMod.csproj", "{A68AC8D6-276B-4A21-ACED-1255E3708EF5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
