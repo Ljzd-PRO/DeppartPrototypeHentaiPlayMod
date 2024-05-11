@@ -1,0 +1,48 @@
+openapi: "3.0.3"
+info:
+  title: "DeppartPrototypeHentaiPlayMod HttpReporter API"
+  description: "DeppartPrototypeHentaiPlayMod HttpReporter API"
+  version: "1.0.0"
+servers:
+  - url: "http://localhost:7788"
+paths:
+  /report:
+    get:
+      summary: Report game events
+      parameters:
+        - name: event_name
+          in: query
+          description: The name of the event
+          required: true
+          schema:
+            type: string
+            enum:
+              - GameEnter
+              - GameExit
+              - InGame
+              - BulbBroken
+              - ZombieRun
+              - EnterLevel1
+              - Level1Zombie
+              - EndZombie
+              - PlayerDied
+              - Shot
+        - name: status
+          in: query
+          description: The status of the event
+          schema:
+            type: string
+            enum:
+              - activate
+              - deactivate
+        - name: t
+          in: query
+          description: The timestamp of the event
+          schema:
+            type: string
+            format: date-time
+      responses:
+        "200":
+          description: Event reported successfully
+        "400":
+          description: Bad request
