@@ -133,25 +133,3 @@ async def report(
                 f"latency: {datetime.datetime.now(datetime.timezone.utc) - t}")
 
 ```
-
-## Extra
-
-### DLLs
-
-- DeppartPrototypeHentaiPlayMod.dll
-- Buttplug.Client.Connectors.WebsocketConnector.dll
-- Buttplug.dll
-- deniszykov.WebSocketListener.dll
-- Mono.HttpUtility.dll
-- Newtonsoft.Json.dll
-- System.IO.dll
-- System.Net.Http.dll
-- System.Runtime.CompilerServices.Unsafe.dll
-- System.Runtime.dll
-- System.Security.Cryptography.Algorithms.dll
-- System.Security.Cryptography.Encoding.dll
-- System.Security.Cryptography.Primitives.dll
-- System.Security.Cryptography.X509Certificates.dll
-- System.Threading.Channels.dll
-- System.Threading.Tasks.Extensions.dll
-- System.ValueTuple.dll
