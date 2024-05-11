@@ -1,8 +1,24 @@
 # DeppartPrototype HentaiPlay
 
-- DeppartPrototype: https://n4ba.itch.io/deppart
+- DeppartPrototype Game Download: https://n4ba.itch.io/deppart
 - Buttplug protocol: https://github.com/buttplugio/buttplug
 - Intiface® Central: https://intiface.com/central/
+
+### About the game DeppartPrototype
+> Deppart is an indie first-person horror game with shooter elements. \
+> Be very careful, enemies kill you with one hit. \
+> https://n4ba.itch.io/deppart
+
+## Feature
+
+- Buttplug devices will be activated on these situations:
+   - Gun shot
+   - Jump-scares
+   - During battle
+   - Player died
+   - Game end
+- Mainly use `Vibrate` command, but you can add other scalar commands
+- Provide an alternative event reporter instead of buttplug (`HttpReporter`)
 
 ## Usage
 
@@ -17,7 +33,22 @@
 7. (Optional) Configure the mod preference in `UserData\MelonPreferences.cfg` under the game path.
 8. Enjoy the game.
 
+## For DG-Lab Users
+
+该 Mod 已适配 郊狼 2.0 3.0 即 DG-Lab-V2, V3，但是需要修改 Mod 配置，同时需要使用专门适配的 buttplug 分支。
+
+- 郊狼 3.0 具体请查看文档：[`docs/dg-lab-v3.md`](docs/dg-lab-v3.md)
+- 郊狼 2.0 由于没有设备可测试，无法给出具体配置参考，但可以参考 3.0 进行配置。
+
 ## Preference
+
+Some important options:
+- ButtPlugServerUrl
+- ButtPlugActiveVibrateScalar
+- ButtPlugShotVibrateScalar
+- ButtPlugVibrateDuration
+- ButtPlugVibrateCmdIndexList
+- ButtPlugAdditionalScalarList
 
 ```cfg
 [HentaiPlay]
@@ -35,6 +66,23 @@ ButtPlugServerUrl = "ws://localhost:12345"
 ButtPlugActiveVibrateScalar = 0.5
 # Set the ButtPlug vibrate scalar when gun shot
 ButtPlugShotVibrateScalar = 1.0
+# Set the ButtPlug vibrate duration when gun shot (Millisecond)
+ButtPlugVibrateDuration = 300
+# Set the index of ButtPlug vibrate scalar commands, you can set multiple index or empty as default. (e.g. [0,1])
+ButtPlugVibrateCmdIndexList = [ ]
+# Set the additional ButtPlug scalar commands, which called during vibrate (It will set to 0 after vibrate stop)
+
+[[HentaiPlay.ButtPlugAdditionalScalarList]]
+Enable = false
+ActuatorType = "Oscillate"
+Index = 0
+Scalar = 0.5
+
+[[HentaiPlay.ButtPlugAdditionalScalarList]]
+Enable = false
+ActuatorType = "Inflate"
+Index = 0
+Scalar = 0.5
 ```
 
 ## Example reporter handler for `HttpHandler`
