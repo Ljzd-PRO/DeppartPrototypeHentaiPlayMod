@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("DeppartPrototypeHentaiPlayMod")]
 [assembly: AssemblyDescription("Buttplug.io game mod for DeppartPrototype | 适配郊狼 3.0 DG-Lab-V3")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Ljzd-PRO")]
+[assembly: AssemblyCompany("https://github.com/Ljzd-PRO")]
 [assembly: AssemblyProduct("DeppartPrototypeHentaiPlayMod")]
 [assembly: AssemblyCopyright("Copyright © 2024, Ljzd-PRO")]
 [assembly: AssemblyTrademark("")]
